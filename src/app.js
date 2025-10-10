@@ -3,9 +3,6 @@ const app = express()
 
 
 
-app.use("/test", (req, res) => {
-    res.send("Hello From Test");
-});
 
 
 app.use("/", (req, res) => {
