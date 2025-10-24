@@ -34,6 +34,12 @@ const userSchema = new mongoose.Schema(
     password: {
         type:String,
         required: true,
+        validate(value){
+            const isValidPassword=validator.isStrongPassword(value);
+            if (!isValidPassword){
+                throw new Error()
+            }
+        }
     },
     age: {
         type:Number,
@@ -51,7 +57,13 @@ const userSchema = new mongoose.Schema(
     },
     photoUrl: {
         type: String,
-        default: "https://imgs.search.brave.com/_xa-9DpUwAMeOS95RlsedIc3gvNOQ1A3wRMyGMRctrc/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly90My5m/dGNkbi5uZXQvanBn/LzE1LzU0LzM0LzEw/LzM2MF9GXzE1NTQz/NDEwOTlfbUdBM2lZ/TVlzc05ZYXhXQ09z/TFNJZFdCRlY3SUli/SWIuanBn"
+        default: "https://imgs.search.brave.com/_xa-9DpUwAMeOS95RlsedIc3gvNOQ1A3wRMyGMRctrc/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly90My5m/dGNkbi5uZXQvanBn/LzE1LzU0LzM0LzEw/LzM2MF9GXzE1NTQz/NDEwOTlfbUdBM2lZ/TVlzc05ZYXhXQ09z/TFNJZFdCRlY3SUli/SWIuanBn",
+        validate(value){
+            const isValidPhotoUrl = validator.isURL(value);
+            if (!isValidPhotoUrl){
+                throw new Error("");
+            }
+        }
     },
     bio: {
         type: String,
