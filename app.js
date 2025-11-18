@@ -2,10 +2,12 @@ const express = require("express");
 const app = express()
 const connectDB = require('./src/config/database');
 const validator = require("validator");
+const cookieParser = require('cookie-parser');
 const {validateSignUpData} = require('./src/utils/validation');
 const User = require('./src/models/user');
 const bcrypt = require('bcrypt');
 app.use(express.json());
+app.use(cookieParser());
 
 
 
@@ -69,12 +71,32 @@ app.post("/login",async (req,res) => {
         if (!isPasswordMatch){
             throw new Error("Invalid Credentials");
         }
+        res.cookie("token", "dummy_token_value");
+
+        // res.cookie("token", "dummy_token_value", {httpOnly: true, secure: true, sameSite: 'Strict'});
         res.status(200).json({success: true, message: "Login Successful"})
     }catch(err){
         res.status(400).json({success:false, message: "Error: "+ err.message});
     }
 })
 
+
+// Profile API - Get User Profile
+
+app.get("/profile",async(req,res) => {
+    try{
+        const cookies = req.cookies;
+        const  {token} = cookies;
+        if (!token){
+            throw new Error("Unauthorized Access: No token provided");
+        }
+        console.log("Cookies:",cookies);
+        res.send("Dummy Profile Data")
+
+    }catch(err){
+        res.status(400).json({success:false, message: "Error: " + err.message});
+    }
+})
 
 
 //FEED API - GET API - Get All the users
