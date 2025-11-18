@@ -1,13 +1,15 @@
 const express = require("express");
 const app = express()
 const connectDB = require('./src/config/database');
+
 const validator = require("validator");
 const cookieParser = require('cookie-parser');
 const {validateSignUpData} = require('./src/utils/validation');
+const { useAuth } = require('./src/middlewares/auth');   
+
 const User = require('./src/models/user');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const {useAuth} = require('./src/middlewares/auth');   
 
 
 app.use(express.json());
@@ -91,19 +93,9 @@ app.post("/login",async (req,res) => {
 
 // Profile API - Get User Profile
 
-app.get("/profile",async(useAuth, req, res) => {
+app.get("/profile",useAuth, async( req, res) => {
     try{
-        const cookies = req.cookies;
-        const  {token} = cookies;
-        if (!token){
-            throw new Error("Unauthorized Access: No token provided");
-        }
-        const decodedMessage = await jwt.verify(token,"dev@Tinder123");
-        const {_id} = decodedMessage;
-        const user = await User.findById({_id:_id});
-        if(!user){
-            throw new Error("User not found");
-        }
+        const {user} = req;
         res.status(200).json({success: true, message: "User profile fetched successfully",data: user});
 
     }catch(err){
