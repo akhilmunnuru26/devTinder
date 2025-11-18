@@ -7,6 +7,9 @@ const {validateSignUpData} = require('./src/utils/validation');
 const User = require('./src/models/user');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const {useAuth} = require('./src/middlewares/auth');   
+
+
 app.use(express.json());
 app.use(cookieParser());
 
@@ -88,7 +91,7 @@ app.post("/login",async (req,res) => {
 
 // Profile API - Get User Profile
 
-app.get("/profile",async(req,res) => {
+app.get("/profile",async(useAuth, req, res) => {
     try{
         const cookies = req.cookies;
         const  {token} = cookies;
