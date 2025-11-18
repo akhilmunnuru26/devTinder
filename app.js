@@ -6,8 +6,11 @@ const cookieParser = require('cookie-parser');
 const {validateSignUpData} = require('./src/utils/validation');
 const User = require('./src/models/user');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 app.use(express.json());
 app.use(cookieParser());
+
+
 
 
 
@@ -71,7 +74,9 @@ app.post("/login",async (req,res) => {
         if (!isPasswordMatch){
             throw new Error("Invalid Credentials");
         }
-        res.cookie("token", "dummy_token_value");
+        const token = await jwt.sign({_id: user._id},"dev@Tinder123");
+        //set cookie
+        res.cookie("token",token);
 
         // res.cookie("token", "dummy_token_value", {httpOnly: true, secure: true, sameSite: 'Strict'});
         res.status(200).json({success: true, message: "Login Successful"})
@@ -90,8 +95,13 @@ app.get("/profile",async(req,res) => {
         if (!token){
             throw new Error("Unauthorized Access: No token provided");
         }
-        console.log("Cookies:",cookies);
-        res.send("Dummy Profile Data")
+        const decodedMessage = await jwt.verify(token,"dev@Tinder123");
+        const {_id} = decodedMessage;
+        const user = await User.findById({_id:_id});
+        if(!user){
+            throw new Error("User not found");
+        }
+        res.status(200).json({success: true, message: "User profile fetched successfully",data: user});
 
     }catch(err){
         res.status(400).json({success:false, message: "Error: " + err.message});

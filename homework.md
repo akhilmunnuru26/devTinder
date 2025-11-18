@@ -34,7 +34,25 @@ what is the use of "-g" while npm install
 |- Install validator package from NPM Package Library
 |- Explore validator library functions and use validator functions for password,email,photoUrl,
 |- Never Trust req.body
+|- npm i cookie-parser package require('cookie-parser) -> app.use(cookieParser())
+|- npm i jsonwebtoken
 
 
 
+
+
+
+
+//User
+{
+    "firstName": "Diya",
+    "lastName": "Sharma",
+    "emailId": "diya.sharma1@gmail.com",
+    "password": "Diya@123",
+    "age": 22,
+    "gender": "female",
+    "photoUrl": "https://randomuser.me/api/portraits/women/2.jpg",
+    "bio": "Aspiring backend engineer learning Node.js.",
+    "skills": ["Node.js", "Express", "MongoDB"]
+  }
 
