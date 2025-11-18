@@ -1,8 +1,12 @@
 const express = require("express");
 const app = express()
-const connectDB = require('./src/config/database')
+const connectDB = require('./src/config/database');
+const validator = require("validator");
+const {validateSignUpData} = require('./src/utils/validation');
 const User = require('./src/models/user');
+const bcrypt = require('bcrypt');
 app.use(express.json());
+
 
 
 
@@ -13,16 +17,61 @@ const port = 7777;
 
 
 
-app.post("/signup", async (req,res) => {
-    // Create an Instance and save the data in the database as documents
-    console.log("Req Body",req.body)
-    const user = new User(req.body)
+app.post("/signup",async(req,res) => {
     try{
-        await user.save()
-        res.send("User created successfully");
+        // validate request body
+        validateSignUpData(req.body);
+        const {emailId,password} = req.body;
+
+        //Encrypt
+        const saltRounds = 10;
+        const hashedPassword = await bcrypt.hash(password,saltRounds);
+        
+        //creating a user instance of the User model
+        const user = new User({
+            firstName: req.body.firstName,
+            lastName: req.body.lastName,
+            emailId: emailId,
+            password:hashedPassword,
+            age: req.body.age,
+            gender: req.body.gender,
+            photoUrl: req.body.photoUrl,
+            bio: req.body.bio,
+            skills: req.body.skills
+        })
+
+        await user.save();
+        res.status(201).json({success: true,message: "User registered successfully"});
+
+
+        
+
+
     }catch(err){
-        console.log("Error while Saving the data in database");
-        res.send(err.message)
+        res.status(400).json({success: false,message: "Error: "+ err.message});
+    }
+});
+
+
+//Login API
+
+app.post("/login",async (req,res) => {
+    try{
+        const {emailId, password} = req.body;
+        if(!emailId){
+            throw new Error("Email Id is required");
+        }
+        const user = await User.findOne({emailId:emailId});
+        if (!user){
+            throw new Error("Invalid Credentials");
+        }
+        const isPasswordMatch = await bcrypt.compare(password, user.password);
+        if (!isPasswordMatch){
+            throw new Error("Invalid Credentials");
+        }
+        res.status(200).json({success: true, message: "Login Successful"})
+    }catch(err){
+        res.status(400).json({success:false, message: "Error: "+ err.message});
     }
 })
 
