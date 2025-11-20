@@ -1,4 +1,4 @@
-
+const validator = require('validator');
 const User = require('../models/user');
 const jwt = require("jsonwebtoken");
 

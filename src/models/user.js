@@ -137,6 +137,16 @@ userSchema.virtual("fullName").get(function () {
   return `${this.firstName} ${this.lastName || ""}`.trim();
 });
 
+
+
+
+// Schema Methods
+
+userSchema.methods.getJwt = function(){
+
+}
+
+
 const User = mongoose.model("User",userSchema);
 module.exports = User
 
