@@ -114,8 +114,7 @@ const userSchema = new mongoose.Schema(
 },{timestamps:true}
 )
 
-// Index for unique email (prevents race conditions)
-userSchema.index({ emailId:1 },{ unique: true })
+
 
 // Pre-save hook for sanitization
 userSchema.pre("save",function(next){

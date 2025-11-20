@@ -159,3 +159,14 @@ app.patch("/user/:userId", async(req,res) => {
 //        res.status(500).send("Update failed: "+ err.message); 
 //     }
 // })
+
+app.get("/feed", async (req,res) => {
+    const users = User.find({})
+    try{
+        const users = await User.find({})
+        res.send(users)
+    }catch(e){
+        res.status(500).send("Something went wrong")
+    }
+})
+
